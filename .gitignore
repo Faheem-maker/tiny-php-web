@@ -1,0 +1,39 @@
+app/runtime/**
+public/assets/**
+
+.env
+
+# Test Application
+app/http/controllers/**
+app/assets/js/**
+app/assets/views/**
+
+# Composer dependencies
+/vendor/
+/composer.lock
+
+# PHPStorm and other IDEs
+idea/
+*.iml
+
+# Log files
+*.log
+
+# Cache and temporary files
+*.cache
+*.tmp
+*.swp
+
+# PHPUnit test results
+phpunit.result.cache
+
+# Backup files
+*.bak
+*.orig
+
+# System files
+DS_Store
+Thumbs.db
+
+# SASS/SCSS cache
+sass-cache/

@@ -1,0 +1,38 @@
+{
+    "name": "tinyframework/web-app",
+    "type": "framework",
+    "keywords": [
+        "php",
+        "framework"
+    ],
+    "description": "Web application / toolset for Tiny framework",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Faheem Anis",
+            "email": "faheem@cartzlink.com",
+            "homepage": "https://faheemanis.rf.gd/",
+            "role": "Developer"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "tinyframework/contracts": ">=1.0.0",
+        "tinyframework/core": ">=1.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "framework\\web\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
