@@ -26,6 +26,7 @@ idea/
 
 # PHPUnit test results
 phpunit.result.cache
+.coverage/
 
 # Backup files
 *.bak
