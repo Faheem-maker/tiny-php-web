@@ -3,7 +3,7 @@
 namespace framework\web;
 
 use framework\Application;
-use framework\routing\Router;
+use framework\web\routing\Router;
 
 /**
  * The base class for all applications.
@@ -11,12 +11,9 @@ use framework\routing\Router;
  * and singleton.
  * 
  * Known Components
- * @property web\components\Config $config Configuration component
- * @property web\components\PathManager $path Path manager component
- * @property web\components\UrlManager $url URL manager component
- * @property web\components\AssetManager $assets Asset manager component
- * @property web\components\WidgetManager $widgets Widget manager component
- * @property web\components\DependencyContainer $di Dependency injection container component
+ * @property components\UrlManager $url URL manager component
+ * @property components\AssetManager $assets Asset manager component
+ * @property components\WidgetManager $widgets Widget manager component
  * @property Router $router
  */
 class WebApplication extends Application
