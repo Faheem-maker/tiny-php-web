@@ -60,7 +60,7 @@ class Request {
      */
     public function input(string $key = '', $default = null) {
         if (empty($key)) {
-            return array_merge($this->post(), $this->get());
+            return array_merge($this->get(), $this->post());
         }
         return $this->post($key, $this->get($key, $default));
     }
