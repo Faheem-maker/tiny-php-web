@@ -11,8 +11,18 @@ use stdClass;
  * methods and utilities over the raw
  * $_GET, $_POST, $_FILES, etc. superglobals.
  */
-class Request {
+class Request
+{
     protected $vals;
+    protected $files;
+
+    public function __construct()
+    {
+        // Initialize all files
+        foreach ($_FILES as $key => $value) {
+            $this->files[$key] = new UploadedFile($value);
+        }
+    }
 
     public function __get($name)
     {
