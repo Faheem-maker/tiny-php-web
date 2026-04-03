@@ -2,7 +2,7 @@
 
 namespace framework\web;
 
-use framework\exceptions\NotFoundException;
+use framework\web\exceptions\NotFoundException;
 use framework\web\routing\Router;
 
 /**
