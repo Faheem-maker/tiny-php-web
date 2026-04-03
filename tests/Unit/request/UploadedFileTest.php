@@ -64,4 +64,19 @@ class UploadedFileTest extends TestCase
         $this->assertEquals('/tmp/test.txt', $this->file->tmp_name);
         $this->assertEquals(UPLOAD_ERR_OK, $this->file->error);
     }
+
+    public function testMove()
+    {
+        $app = createApp();
+        $this->file->move('/uploads/');
+
+        $this->assertEquals(1, count($app->fs->moved));
+        \defined('DS') || define('DS', DIRECTORY_SEPARATOR);
+        $this->assertEquals([
+            [
+                '/tmp/test.txt',
+                realpath(__DIR__ . '/../..') . DS . 'storage' . DS . 'uploads' . DS . 'test.txt'
+            ]
+        ], $app->fs->moved);
+    }
 }

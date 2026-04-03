@@ -35,4 +35,11 @@ class UploadedFile
     {
         return $this->data[$name];
     }
+
+    public function move(string $path)
+    {
+        $path = app()->path->resolveWithDefault($path, '@storage');
+        $file_name = pathinfo($this->tmp_name, PATHINFO_FILENAME);
+        app()->fs->move($this->tmp_name, $path . DIRECTORY_SEPARATOR . $file_name . '.' . $this->ext());
+    }
 }
