@@ -88,6 +88,22 @@ class Request
         return $_GET['__method'] ?? $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
 
+    public function file(string $key = '')
+    {
+        if (empty($key)) {
+            return $this->files;
+        }
+        return $this->files[$key] ?? null;
+    }
+
+    public function files(string $key = '')
+    {
+        if (empty($key)) {
+            return $this->files;
+        }
+        return $this->files[$key] ?? null;
+    }
+
     /**
      * Attach a new variable to $request instance
      * 
