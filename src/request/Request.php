@@ -31,7 +31,8 @@ class Request
         }
     }
 
-    public function path() {
+    public function path()
+    {
         return app()->url->path();
     }
 
@@ -42,7 +43,8 @@ class Request
      * @param mixed $default The default value to return if the key is not set.
      * @return mixed The value from $_GET if set, otherwise the default value.
      */
-    public function get(string $key = '', $default = null) {
+    public function get(string $key = '', $default = null)
+    {
         if ($key === '') {
             return $_GET;
         }
@@ -55,7 +57,8 @@ class Request
      * @param mixed $default The default value to return if the key is not set.
      * @return mixed The value from $_POST if set, otherwise the default value.
      */
-    public function post(string $key = '', $default = null) {
+    public function post(string $key = '', $default = null)
+    {
         if ($key === '') {
             return $_POST;
         }
@@ -68,7 +71,8 @@ class Request
      * @param mixed $default The default value to return if the key is not set.
      * @return mixed The value from $_POST if set, otherwise the value from $_GET, or the default value.
      */
-    public function input(string $key = '', $default = null) {
+    public function input(string $key = '', $default = null)
+    {
         if (empty($key)) {
             return array_merge($this->get(), $this->post());
         }
@@ -79,7 +83,8 @@ class Request
      * Get the HTTP method of the request, supporting method override via a __method query parameter. Defaults to GET if not specified.
      * @return string The HTTP method of the request.
      */
-    public function method() {
+    public function method()
+    {
         return $_GET['__method'] ?? $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
 
@@ -93,7 +98,8 @@ class Request
      * Request::put('data', 'test');
      * $data = $request->data;
      */
-    public function put($key, $value) {
+    public function put($key, $value)
+    {
         $this->vals[$key] = $value;
     }
 
