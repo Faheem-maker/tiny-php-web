@@ -2,7 +2,7 @@
 
 namespace framework\web\widgets;
 
-use framework\blaze\interfaces\RootContext;
+use framework\web\blaze\interfaces\RootContext;
 
 abstract class Widget
 {

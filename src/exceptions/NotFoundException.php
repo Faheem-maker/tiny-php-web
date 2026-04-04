@@ -1,6 +1,6 @@
 <?php
 
-framework\web\exceptions;
+namespace framework\web\exceptions;
 
 use framework\contracts\HttpException;
 use Throwable;

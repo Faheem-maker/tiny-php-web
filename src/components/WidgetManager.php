@@ -3,7 +3,7 @@
 namespace framework\web\components;
 
 use framework\Application;
-use framework\blaze\interfaces\RootContext;
+use framework\web\blaze\interfaces\RootContext;
 use framework\Component;
 use framework\web\widgets\Widget;
 

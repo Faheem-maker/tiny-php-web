@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question / Discussion
+    url: https://github.com/Faheem-maker/tiny-php-core/discussions
+    about: Ask general questions here.

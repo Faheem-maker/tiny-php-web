@@ -11,8 +11,18 @@ use stdClass;
  * methods and utilities over the raw
  * $_GET, $_POST, $_FILES, etc. superglobals.
  */
-class Request {
+class Request
+{
     protected $vals;
+    protected $files;
+
+    public function __construct()
+    {
+        // Initialize all files
+        foreach ($_FILES as $key => $value) {
+            $this->files[$key] = new UploadedFile($value);
+        }
+    }
 
     public function __get($name)
     {
@@ -21,7 +31,8 @@ class Request {
         }
     }
 
-    public function path() {
+    public function path()
+    {
         return app()->url->path();
     }
 
@@ -32,7 +43,8 @@ class Request {
      * @param mixed $default The default value to return if the key is not set.
      * @return mixed The value from $_GET if set, otherwise the default value.
      */
-    public function get(string $key = '', $default = null) {
+    public function get(string $key = '', $default = null)
+    {
         if ($key === '') {
             return $_GET;
         }
@@ -45,7 +57,8 @@ class Request {
      * @param mixed $default The default value to return if the key is not set.
      * @return mixed The value from $_POST if set, otherwise the default value.
      */
-    public function post(string $key = '', $default = null) {
+    public function post(string $key = '', $default = null)
+    {
         if ($key === '') {
             return $_POST;
         }
@@ -58,7 +71,8 @@ class Request {
      * @param mixed $default The default value to return if the key is not set.
      * @return mixed The value from $_POST if set, otherwise the value from $_GET, or the default value.
      */
-    public function input(string $key = '', $default = null) {
+    public function input(string $key = '', $default = null)
+    {
         if (empty($key)) {
             return array_merge($this->get(), $this->post());
         }
@@ -69,8 +83,25 @@ class Request {
      * Get the HTTP method of the request, supporting method override via a __method query parameter. Defaults to GET if not specified.
      * @return string The HTTP method of the request.
      */
-    public function method() {
+    public function method()
+    {
         return $_GET['__method'] ?? $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    }
+
+    public function file(string $key = '')
+    {
+        if (empty($key)) {
+            return $this->files;
+        }
+        return $this->files[$key] ?? null;
+    }
+
+    public function files(string $key = '')
+    {
+        if (empty($key)) {
+            return $this->files;
+        }
+        return $this->files[$key] ?? null;
     }
 
     /**
@@ -83,7 +114,8 @@ class Request {
      * Request::put('data', 'test');
      * $data = $request->data;
      */
-    public function put($key, $value) {
+    public function put($key, $value)
+    {
         $this->vals[$key] = $value;
     }
 
