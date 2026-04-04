@@ -18,10 +18,50 @@ class Request
 
     public function __construct()
     {
-        // Initialize all files
-        foreach ($_FILES as $key => $value) {
-            $this->files[$key] = new UploadedFile($value);
+        // Organize and wrap files
+        $this->files = $this->organizeFiles($_FILES);
+    }
+
+    /**
+     * Recursively reorganizes $_FILES structure to a more natural one.
+     * 
+     * PHP's structure for multi-file uploads (e.g. name="docs[]") is:
+     * $_FILES['docs']['name'][0], $_FILES['docs']['tmp_name'][0], etc.
+     * This reorganizes it into:
+     * $this->files['docs'][0] = UploadedFile(...)
+     */
+    protected function organizeFiles(array $files): array
+    {
+        $normalized = [];
+        foreach ($files as $name => $file) {
+            if (isset($file['name']) && is_array($file['name'])) {
+                $normalized[$name] = $this->fixPhpFilesStructure($file);
+            } else {
+                $normalized[$name] = new UploadedFile($file);
+            }
         }
+        return $normalized;
+    }
+
+    protected function fixPhpFilesStructure(array $file): array
+    {
+        $fixed = [];
+        foreach (array_keys($file['name']) as $key) {
+            $data = [
+                'name'     => $file['name'][$key],
+                'type'     => $file['type'][$key],
+                'tmp_name' => $file['tmp_name'][$key],
+                'error'    => $file['error'][$key],
+                'size'     => $file['size'][$key],
+            ];
+
+            if (is_array($data['name'])) {
+                $fixed[$key] = $this->fixPhpFilesStructure($data);
+            } else {
+                $fixed[$key] = new UploadedFile($data);
+            }
+        }
+        return $fixed;
     }
 
     public function __get($name)
@@ -90,10 +130,7 @@ class Request
 
     public function file(string $key = '')
     {
-        if (empty($key)) {
-            return $this->files;
-        }
-        return $this->files[$key] ?? null;
+        return $this->files($key);
     }
 
     public function files(string $key = '')
@@ -101,7 +138,20 @@ class Request
         if (empty($key)) {
             return $this->files;
         }
-        return $this->files[$key] ?? null;
+
+        // Support dot notation for nested access
+        $parts = explode('.', $key);
+        $value = $this->files;
+
+        foreach ($parts as $part) {
+            if (is_array($value) && isset($value[$part])) {
+                $value = $value[$part];
+            } else {
+                return null;
+            }
+        }
+
+        return $value;
     }
 
     /**
