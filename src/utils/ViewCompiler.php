@@ -4,6 +4,7 @@ namespace framework\web\utils;
 
 use Exception;
 use framework\Application;
+use Throwable;
 
 /**
  * @author Faheem Anis
@@ -42,6 +43,31 @@ class ViewCompiler
         }
 
         $this->replacements = [
+            // Directive <Namespace.Widget />
+            [
+                '/<([A-Z][A-Za-z0-9\.]*)\b((?:[^"\'>]|"[^"]*"|\'[^\']*\')*)\/>/',
+                function ($matches) {
+                    $tagName = $matches[1];
+                    $attrs = str_replace(['{{', '}}'], ['__CURLY_OPEN__', '__CURLY_CLOSE__'], $matches[2]);
+                    // var_export handles escaping single quotes and wrapping the string perfectly
+                    $attributes = var_export($attrs, true);
+
+                    return "<?= \$this->renderWidgetByName('{$tagName}', {$attributes}); ?>";
+                }
+            ],
+            // Directive <Namespace.Widget></Namespace.Widget>
+            [
+                '/<([A-Z][A-Za-z0-9\.]*)\b((?>"[^"]*"|[^\/>"]*)*)>(.*?)<\/\1>/s',
+                function ($matches) {
+                    $tagName = $matches[1];
+                    $attrs = str_replace(['{{', '}}'], ['__CURLY_OPEN__', '__CURLY_CLOSE__'], $matches[2]);
+                    // var_export handles escaping single quotes and wrapping the string perfectly
+                    $attributes = var_export($attrs, true);
+                    $content = $matches[3];
+
+                    return "<?php \$this->pushWidget('{$tagName}', {$attributes}); ob_start(); ?>{$content}<?= \$this->renderWidget(ob_get_clean()); \$this->popWidget(); ?>";
+                },
+            ],
             // Directive: @if ... @endif
             ['/@if\s*\((.*?)\)/', '<?php if($1): ?>'],
             ['/@endif/', '<?php endif; ?>'],
@@ -59,30 +85,7 @@ class ViewCompiler
             // Directive: @layout('view', data)
             ['/@layout\(\s*([\'"])(.*?)\1\s*(?:,\s*(.*?))\)/s', '<?php $this->layout = "$2"; $this->layoutData = $3; ?>'],
             // Directive: @layout('view')
-            ['/@layout\(\s*([\'"])(.*?)\1\)/s', '<?php $this->layout = "$2";'],
-            // Directive <Namespace.Widget />
-            [
-                '/<([A-Z][A-Za-z0-9\.]*)\b((?:[^"\'>]|"[^"]*"|\'[^\']*\')*)\/>/',
-                function ($matches) {
-                    $tagName = $matches[1];
-                    // var_export handles escaping single quotes and wrapping the string perfectly
-                    $attributes = var_export($matches[2], true);
-
-                    return "<?= \$this->renderWidgetByName('{$tagName}', {$attributes}); ?>";
-                }
-            ],
-            // Directive <Namespace.Widget></Namespace.Widget>
-            [
-                '/<([A-Z][A-Za-z0-9\.]*)\b((?>"[^"]*"|[^\/>"]*)*)>(.*?)<\/\1>/s',
-                function ($matches) {
-                    $tagName = $matches[1];
-                    // var_export handles escaping single quotes and wrapping the string perfectly
-                    $attributes = var_export($matches[2], true);
-                    $content = $matches[3];
-
-                    return "<?php \$this->pushWidget('{$tagName}', {$attributes}); ob_start(); ?>{$content}<?= \$this->renderWidget(ob_get_clean()); \$this->popWidget(); ?>";
-                },
-            ],
+            ['/@layout\(\s*([\'"])(.*?)\1\)/s', '<?php $this->layout = "$2"; ?>'],
         ];
     }
 
@@ -195,13 +198,24 @@ class ViewCompiler
     {
         if (!empty($params)) {
             $params = stripcslashes($params);
+
             $params = preg_replace('/:([-\w]+)\s*=\s*"([^"]+)"/', '"$1" => $2,', $params);
             $params = preg_replace('/([-\w]+)\s*=\s*"([^"]+)"/', '"$1" => "$2",', $params);
             $params = preg_replace('/:([-\w]+)\b/', '"$1" => true,', $params);
 
+            $params = str_replace(['__CURLY_OPEN__', '__CURLY_CLOSE__'], ['{{', '}}'], $params);
+
+            // Process curly braces within attributes
+            $params = preg_replace('/\{\{!!([^\n{}]+)\}\}/', '".($1)."', $params);
+            $params = preg_replace('/\{\{([^\n{}]+)\}\}/', '".htmlspecialchars($1)."', $params);
+
             extract($this->data);
 
-            eval ('$params = [' . $params . '];');
+            try {
+                eval ('$params = [' . $params . '];');
+            } catch (Throwable $e) {
+                throw new Exception("Unable to parse widget parameters, " . $params);
+            }
         } else {
             $params = [];
         }
