@@ -196,7 +196,7 @@ class UrlManager extends Component
         if ($absolute) {
             return $path;
         }
-        return $this->base() . '/' . trim($path, '/') . ($query ? '?' . http_build_query($query) : '');
+        return ($this->base() == '/' ? '' : $this->base()) . '/' . trim($path, '/') . ($query ? '?' . http_build_query($query) : '');
     }
 
     public function named(string $name)
