@@ -5,6 +5,7 @@ namespace framework\web\components;
 use framework\Application;
 use framework\Component;
 use framework\web\Routes;
+use framework\db\ActiveModel;
 
 /**
  * URL Manager
@@ -191,17 +192,68 @@ class UrlManager extends Component
      * @param array  $query
      * @param bool   $absolute
      */
-    public function to(string $path = '/', array $query = [], bool $absolute = false): string
+    public function to(string $path = '/', mixed $params = [], array $query = [], bool $absolute = false): string
     {
+        [$path, $params] = $this->resolveParameters($path, $params);
+        $query = array_merge($params, $query);
+
         if ($absolute) {
             return $path;
         }
         return ($this->base() == '/' ? '' : $this->base()) . '/' . trim($path, '/') . ($query ? '?' . http_build_query($query) : '');
     }
 
-    public function named(string $name)
+    public function named(string $name, mixed $params = [])
     {
-        return Routes::resolveName($name)->name;
+        return $this->to(Routes::resolveName($name)->name, $params);
+    }
+
+    /**
+     * Generate relative URL by route name without base URL
+     */
+    public function byName(string $name, mixed $params = [])
+    {
+        [$path, $params] = $this->resolveParameters(Routes::resolveName($name)->name, $params);
+        return $path . ($params ? '?' . http_build_query($params) : '');
+    }
+
+    /**
+     * Resolve parameters into path placeholders
+     */
+    protected function resolveParameters(string $path, mixed $params = []): array
+    {
+        if ($params instanceof ActiveModel) {
+            $pk = $params::primaryKey();
+            if ($pk) {
+                $path = preg_replace('/\{[a-zA-Z0-9_-]+\}/', $params->$pk, $path, 1);
+            }
+            return [$path, []];
+        }
+
+        if (is_array($params) && !empty($params)) {
+            foreach ($params as $key => $value) {
+                if ($value instanceof ActiveModel) {
+                    $pk = $value::primaryKey();
+                    $value = $pk ? $value->$pk : $value;
+                }
+
+                if (is_string($key)) {
+                    $placeholder = "{" . $key . "}";
+                    if (str_contains($path, $placeholder)) {
+                        $path = str_replace($placeholder, $value, $path);
+                        unset($params[$key]);
+                    }
+                } else {
+                    $count = 0;
+                    $path = preg_replace('/\{[a-zA-Z0-9_-]+\}/', (string)$value, $path, 1, $count);
+                    if ($count > 0) {
+                        unset($params[$key]);
+                    }
+                }
+            }
+        }
+
+        return [$path, $params];
     }
 
     /**
