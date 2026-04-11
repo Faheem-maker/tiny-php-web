@@ -40,7 +40,7 @@ class Router extends Component implements RouterInterface
         $pattern = preg_replace('/\{([a-zA-Z]+)\}/', '(?P<$1>[^/]++)', $fullPath);
         $pattern = "#^" . $pattern . "$#";
 
-        $routeObject = new Route($action, $fullPath);
+        $routeObject = new Route($action, $fullPath, $name);
         $this->routes[$method][$pattern] = $routeObject;
 
         if (!empty($name)) {
@@ -101,8 +101,11 @@ class Router extends Component implements RouterInterface
 
     public function rename($from, $to)
     {
+        if (empty($this->namedRoutes[$from])) {
+            return;
+        }
         $this->namedRoutes[$to] = $this->namedRoutes[$from];
-        unset($this->namedRoutes);
+        unset($this->namedRoutes[$from]);
     }
 
     public function mount(string $prefix, RouterInterface $router)

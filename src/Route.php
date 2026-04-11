@@ -8,7 +8,8 @@ class Route
 
     public function __construct(
         public mixed $action,
-        public string $name
+        public string $fullPath,
+        public string $name,
     ) {
     }
 
@@ -66,6 +67,6 @@ class Route
 
     public function rename($to)
     {
-
+        Routes::rename($this->name, $to);
     }
 }
