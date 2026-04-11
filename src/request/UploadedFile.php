@@ -2,6 +2,8 @@
 
 namespace framework\web\request;
 
+use Exception;
+
 /**
  * Represents a file uploaded to the system
  * 
@@ -22,8 +24,13 @@ class UploadedFile
 
     public function ext()
     {
-        $name = $this->data['name'];
+        $name = $this->data['name'] ?? $this->data['path'];
         return pathinfo($name, PATHINFO_EXTENSION);
+    }
+
+    public function name()
+    {
+        return $this->data['name'] ?? (pathinfo($this->data['path'], PATHINFO_FILENAME) . '.' . $this->ext());
     }
 
     public function isValid()
