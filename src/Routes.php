@@ -72,8 +72,7 @@ class Routes
             'store' => ['POST', '/'],
             'show' => ['GET', "/{{$resource}}"],
             'edit' => ['GET', '/{' . $resource . '}/edit'],
-            'update' => ['PUT', "/{{$resource}}"],
-            'update' => ['PATCH', "/{{$resource}}"],
+            'update' => [['PUT', "/{{$resource}}"], ['PATCH', "/{{$resource}}"]],
             'destroy' => ['DELETE', "/{{$resource}}"],
         ];
 
@@ -89,8 +88,15 @@ class Routes
 
         return Routes::group($prefix, function () use ($routes, $controller) {
             foreach ($routes as $action => $route) {
-                $method = $route[0];
-                Routes::$method($route[1], [$controller, $action], $action);
+                if (is_array($route[0])) {
+                    foreach ($route as $r) {
+                        $method = $r[0];
+                        Routes::$method($r[1], [$controller, $action], $action);
+                    }
+                } else {
+                    $method = $route[0];
+                    Routes::$method($route[1], [$controller, $action], $action);
+                }
             }
         })->name($resource);
     }

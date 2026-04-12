@@ -68,15 +68,23 @@ class UploadedFileTest extends TestCase
     public function testMove()
     {
         $app = createApp();
-        $this->file->move('/uploads/');
+        $result = $this->file->move('/uploads/');
 
         $this->assertEquals(1, count($app->fs->moved));
         \defined('DS') || define('DS', DIRECTORY_SEPARATOR);
+        $expectedPath = realpath(__DIR__ . '/../..') . DS . 'storage' . DS . 'uploads' . DS . 'test.txt';
+
         $this->assertEquals([
             [
                 '/tmp/test.txt',
-                realpath(__DIR__ . '/../..') . DS . 'storage' . DS . 'uploads' . DS . 'test.txt'
+                $expectedPath
             ]
         ], $app->fs->moved);
+
+        $this->assertEquals([
+            'name' => 'test.txt',
+            'path' => $expectedPath,
+            'original' => 'test.txt'
+        ], $result);
     }
 }

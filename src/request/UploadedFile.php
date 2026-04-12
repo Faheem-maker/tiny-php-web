@@ -2,6 +2,8 @@
 
 namespace framework\web\request;
 
+use Exception;
+
 /**
  * Represents a file uploaded to the system
  * 
@@ -22,8 +24,13 @@ class UploadedFile
 
     public function ext()
     {
-        $name = $this->data['name'];
+        $name = $this->data['name'] ?? $this->data['path'];
         return pathinfo($name, PATHINFO_EXTENSION);
+    }
+
+    public function name()
+    {
+        return $this->data['name'] ?? (pathinfo($this->data['path'], PATHINFO_FILENAME) . '.' . $this->ext());
     }
 
     public function isValid()
@@ -39,7 +46,15 @@ class UploadedFile
     public function move(string $path)
     {
         $path = app()->path->resolveWithDefault($path, '@storage');
-        $file_name = pathinfo($this->tmp_name, PATHINFO_FILENAME);
-        app()->fs->move($this->tmp_name, $path . DIRECTORY_SEPARATOR . $file_name . '.' . $this->ext());
+        $file_name = pathinfo($this->tmp_name, PATHINFO_FILENAME) . '.' . $this->ext();
+        $target_path = $path . DIRECTORY_SEPARATOR . $file_name;
+
+        app()->fs->move($this->tmp_name, $target_path);
+
+        return [
+            'name' => $file_name,
+            'path' => $target_path,
+            'original' => $this->data['name'],
+        ];
     }
 }

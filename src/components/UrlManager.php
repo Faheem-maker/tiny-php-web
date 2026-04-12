@@ -88,9 +88,7 @@ class UrlManager extends Component
 
     public function public(): string
     {
-        $base = $this->base();
-
-        return $base . '/public';
+        return $this->to('/public');
     }
 
     /**
@@ -205,7 +203,7 @@ class UrlManager extends Component
 
     public function named(string $name, mixed $params = [])
     {
-        return $this->to(Routes::resolveName($name)->name, $params);
+        return $this->to(Routes::resolveName($name)->fullPath, $params);
     }
 
     /**
@@ -213,7 +211,7 @@ class UrlManager extends Component
      */
     public function byName(string $name, mixed $params = [])
     {
-        [$path, $params] = $this->resolveParameters(Routes::resolveName($name)->name, $params);
+        [$path, $params] = $this->resolveParameters(Routes::resolveName($name)->fullPath, $params);
         return $path . ($params ? '?' . http_build_query($params) : '');
     }
 
@@ -245,7 +243,7 @@ class UrlManager extends Component
                     }
                 } else {
                     $count = 0;
-                    $path = preg_replace('/\{[a-zA-Z0-9_-]+\}/', (string)$value, $path, 1, $count);
+                    $path = preg_replace('/\{[a-zA-Z0-9_-]+\}/', (string) $value, $path, 1, $count);
                     if ($count > 0) {
                         unset($params[$key]);
                     }
