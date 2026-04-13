@@ -68,4 +68,9 @@ class Session extends Component
     {
         return $_SESSION[$key] = $value;
     }
+
+    public function has($key)
+    {
+        return isset($_SESSION[$key]);
+    }
 }

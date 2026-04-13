@@ -30,6 +30,12 @@ class WebApplication extends Application
         $this->method = $method;
     }
 
+    public function init()
+    {
+        parent::init();
+        \framework\models\Model::registerTypeTransformer(\framework\web\request\UploadedFile::class, new \framework\web\transformers\UploadedFileTransformer());
+    }
+
     public function run()
     {
         $executor = new Executor($this->router);
