@@ -26,6 +26,16 @@ class UploadedFile
         return pathinfo($name, PATHINFO_EXTENSION);
     }
 
+    public function name()
+    {
+        return $this->data['name'] ?? (pathinfo($this->data['path'], PATHINFO_FILENAME) . '.' . $this->ext());
+    }
+
+    public function url()
+    {
+        return app()->url->to('/app/storage/uploads/' . $this->name());
+    }
+
     public function isValid()
     {
         return $this->data['error'] === UPLOAD_ERR_OK;
