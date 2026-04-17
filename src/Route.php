@@ -9,7 +9,7 @@ class Route
     public function __construct(
         public mixed $action,
         public string $fullPath,
-        public string $name,
+        public string|null $name,
     ) {
     }
 
