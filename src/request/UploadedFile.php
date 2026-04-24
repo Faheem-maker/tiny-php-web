@@ -35,7 +35,7 @@ class UploadedFile
 
     public function url()
     {
-        return app()->url->to('/app/storage/uploads/' . $this->name());
+        return app()->url->to('/media/' . $this->name());
     }
 
     public function isValid()
