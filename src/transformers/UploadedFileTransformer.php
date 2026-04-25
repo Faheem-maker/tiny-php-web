@@ -18,7 +18,7 @@ class UploadedFileTransformer implements TypeTransformer
         } else if ($value instanceof UploadedFile) {
             return $value;
         }
-        return new UploadedFile(['path' => $value]);
+        return new UploadedFile(['original_path' => $value, 'path' => app()->path->resolve($value), 'size' => 1, 'error' => UPLOAD_ERR_OK]);
     }
 
     /**
@@ -31,5 +31,17 @@ class UploadedFileTransformer implements TypeTransformer
             return $result['path'];
         }
         return $value;
+    }
+
+    /**
+     * An uploaded file input is considered empty when no file was selected.
+     * This prevents overwriting the previously saved value during updates.
+     */
+    public function isEmpty($value): bool
+    {
+        if ($value instanceof UploadedFile) {
+            return !$value->isValid();
+        }
+        return empty($value);
     }
 }

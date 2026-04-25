@@ -45,11 +45,23 @@ class UploadedFile
 
     public function __get($name)
     {
+        if ($name == 'tmp_name') {
+            return $this->data['tmp_name'] ?? $this->data['path'];
+        }
         return $this->data[$name];
     }
 
     public function move(string $path)
     {
+        if (empty($this->data['tmp_name'])) {
+            $file_name = pathinfo($this->tmp_name, PATHINFO_FILENAME) . '.' . $this->ext();
+            return [
+                'name' => $file_name,
+                'path' => $this->original_path,
+                'original' => $file_name,
+            ];
+        }
+
         $path = app()->path->resolveWithDefault($path, '@storage');
         $file_name = pathinfo($this->tmp_name, PATHINFO_FILENAME) . '.' . $this->ext();
         $target_path = $path . DIRECTORY_SEPARATOR . $file_name;
