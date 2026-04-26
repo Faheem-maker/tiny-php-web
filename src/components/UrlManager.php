@@ -88,7 +88,7 @@ class UrlManager extends Component
 
     public function public(): string
     {
-        return $this->to('/public');
+        return '';
     }
 
     /**
