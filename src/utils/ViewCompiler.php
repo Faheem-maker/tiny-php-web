@@ -69,7 +69,7 @@ class ViewCompiler
                 },
             ],
             // Directive: @if ... @endif
-            ['/@if\s*\((.*?)\)/', '<?php if($1): ?>'],
+            ['/@if\s*\(([^()]*+(?:\(([^()]*+)\)[^()]*)*)\)/', '<?php if($1): ?>'],
             ['/@endif/', '<?php endif; ?>'],
             // Directive: @foreach ... @endforeach
             ['/@foreach\s*\(([^()]*+(?:\(([^()]*+)\)[^()]*)*)\)/', '<?php foreach($1): ?>'],
