@@ -199,8 +199,8 @@ class ViewCompiler
         if (!empty($params)) {
             $params = stripcslashes($params);
 
-            $params = preg_replace('/:([-\w]+)\s*=\s*"([^"]+)"/', '"$1" => $2,', $params);
-            $params = preg_replace('/([-\w]+)\s*=\s*"([^"]+)"/', '"$1" => "$2",', $params);
+            $params = preg_replace('/:([-\w]+)\s*=\s*"([^"]*)"/', '"$1" => $2,', $params);
+            $params = preg_replace('/([-\w]+)\s*=\s*"([^"]*)"/', '"$1" => "$2",', $params);
             $params = preg_replace('/:([-\w]+)\b/', '"$1" => true,', $params);
 
             $params = str_replace(['__CURLY_OPEN__', '__CURLY_CLOSE__'], ['{{', '}}'], $params);
