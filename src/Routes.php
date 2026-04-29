@@ -105,4 +105,9 @@ class Routes
     {
         static::router()->rename($from, $to);
     }
+
+    public static function name($name, $route)
+    {
+        static::router()->name($name, $route);
+    }
 }

@@ -67,6 +67,16 @@ class Route
 
     public function rename($to)
     {
-        Routes::rename($this->name, $to);
+        $this->name($to);
+    }
+
+    public function name($name)
+    {
+        if (!empty($this->name)) {
+            Routes::rename($this->name, $name);
+        }
+
+        $this->name = $name;
+        Routes::name($this->name, $this);
     }
 }
