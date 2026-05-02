@@ -99,6 +99,11 @@ class Router extends Component implements RouterInterface
         return $this->namedRoutes[$name];
     }
 
+    public function name($name, $route)
+    {
+        $this->namedRoutes[$name] = $route;
+    }
+
     public function rename($from, $to)
     {
         if (empty($this->namedRoutes[$from])) {
