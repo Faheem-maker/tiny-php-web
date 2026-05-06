@@ -92,7 +92,7 @@ class WidgetManager extends Component
         $result = '\\app\\resources\\widgets\\';
 
         foreach ($segments as $segment) {
-            $result .= $segment . '\\';
+            $result .= lcfirst($segment) . '\\';
         }
 
         return rtrim($result, '\\');
