@@ -3,6 +3,7 @@
 use framework\components\Config;
 use framework\components\PathManager;
 use framework\components\Validator;
+use framework\web\components\AssetManager;
 use framework\web\tests\FakeFileSystem;
 use framework\web\tests\TestDependencyContainer;
 use framework\web\WebApplication;
@@ -17,6 +18,9 @@ function createApp(array $config = [])
             'assets' => __DIR__ . '/app/resources',
             'storage' => __DIR__ . '/storage'
         ],
+        'app' => [
+            'base_url' => '/'
+        ],
         'TEST_KEY' => 'tests',
     ];
 
@@ -29,6 +33,8 @@ function createApp(array $config = [])
     $app->registerComponent('di', new TestDependencyContainer());
     $app->registerComponent('validator', new Validator());
     $app->registerComponent('fs', new FakeFileSystem());
+    $app->registerComponent('url', new \framework\web\components\UrlManager());
+    $app->registerComponent('assets', new AssetManager());
 
     foreach ($base_config as $key => $value) {
         $app->config->set($key, $value);
