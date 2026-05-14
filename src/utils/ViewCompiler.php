@@ -168,6 +168,16 @@ class ViewCompiler
             throw new Exception("Unable to resolve view, \"$templatePath\"");
         }
 
+        $content = $this->compileString($content);
+
+        file_put_contents($compiledPath, $content);
+    }
+
+    /**
+     * Runs regex replacements on the given content.
+     */
+    public function compileString(string $content): string
+    {
         foreach ($this->replacements as $replacement) {
             [$pattern, $handler] = $replacement;
 
@@ -184,7 +194,7 @@ class ViewCompiler
             } while ($content !== $old);
         }
 
-        file_put_contents($compiledPath, $content);
+        return $content;
     }
 
     protected function renderLayout($content)

@@ -34,11 +34,10 @@ class UrlManager extends Component
      */
     public function init(): void
     {
-        $app = Application::get();
+        $app = app();
 
         $this->baseUrl = config('app.base_url');
         $this->currentPath = $this->normalize($this->removeBase($app->route));
-
     }
 
     /* -----------------------------------------------------------------
@@ -67,7 +66,10 @@ class UrlManager extends Component
         $result = '';
 
         foreach ($segments as $segment) {
-            $result .= rtrim($segment, '/') . '/';
+            echo "segment: $segment\n";
+
+            $result .= trim($segment, '/') . '/';
+            echo "Result: $result\n";
         }
 
         return substr($result, 0, strlen($result) - 1);
