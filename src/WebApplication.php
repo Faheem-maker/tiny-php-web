@@ -46,12 +46,17 @@ class WebApplication extends Application
     /**
      * Get singleton instance
      */
-    public static function getInstance(string $route, string $method): Application
+    public static function getInstance(string $route, string $method): WebApplication
     {
         if (static::$instance === null) {
             static::$instance = new static($route, $method);
         }
 
         return static::$instance;
+    }
+
+    public static function flushInstance()
+    {
+        static::$instance = null;
     }
 }
